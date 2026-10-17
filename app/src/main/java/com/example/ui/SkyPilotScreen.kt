@@ -250,8 +250,11 @@ fun SkyPilotScreen(
             },
             isRecording = isRecording,
             recordDurationSec = recordDurationSec,
-            lastPhotoNotice = lastPhotoNotice,
-            onResetDrone = { resetDrone() },
+            lastPhotoNotice = lastPhotoNotice ?: flightController.lastFeedbackMessage,
+            onResetDrone = {
+                resetDrone()
+                flightController.lastFeedbackMessage = "SYSTEM RESET TO LAUNCHPAD"
+            },
             modifier = Modifier.fillMaxSize()
         )
 

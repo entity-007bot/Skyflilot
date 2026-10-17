@@ -60,6 +60,21 @@ class PhysicsAndFcUnitTest {
     }
 
     @Test
+    fun testMotorMixerPitchDifferential() {
+        val mixer = MotorMixer(airmodeEnabled = true)
+        val outputs = FloatArray(4)
+
+        // Commanded pitch forward (+pitch): rear motors (M1, M3) push up, front motors (M2, M4) push down
+        mixer.mix(throttle = 0.5f, roll = 0f, pitch = 0.2f, yaw = 0f, outMotors = outputs)
+
+        assertEquals(0.7f, outputs[0], 0.001f) // M1 (Rear-Right)
+        assertEquals(0.3f, outputs[1], 0.001f) // M2 (Front-Right)
+        assertEquals(0.7f, outputs[2], 0.001f) // M3 (Rear-Left)
+        assertEquals(0.3f, outputs[3], 0.001f) // M4 (Front-Left)
+        assertTrue("Rear motors must produce more thrust than front motors for forward tilt", outputs[0] > outputs[1])
+    }
+
+    @Test
     fun testPidControllerIntegralAndWindup() {
         val pid = PidController(kp = 0.2f, ki = 0.5f, kd = 0.01f, iLimit = 0.4f, outLimit = 1.0f)
 

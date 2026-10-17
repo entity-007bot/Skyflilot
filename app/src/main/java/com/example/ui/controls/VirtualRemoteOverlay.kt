@@ -339,6 +339,9 @@ fun VirtualRemoteOverlay(
                         if (isArmed) {
                             flightController.disarm()
                         } else {
+                            if (flightController.physics.isCrashed) {
+                                onResetDrone()
+                            }
                             val ok = flightController.arm(transmitterState.throttle)
                             if (!ok) {
                                 triggerHaptic(120)
@@ -543,14 +546,14 @@ private fun RemoteHoldActionButton(
     testTag: String,
     onConfirm: () -> Unit
 ) {
-    val bg = if (isArmed) accentColor.copy(alpha = 0.24f) else Color(0xFF0E1624).copy(alpha = 0.85f)
-    val borderCol = if (isArmed) accentColor else Color(0xFF37474F).copy(alpha = 0.6f)
+    val bg = if (isArmed) accentColor.copy(alpha = 0.28f) else Color(0xFF1E0A0A).copy(alpha = 0.90f)
+    val borderCol = if (isArmed) accentColor else Color(0xFFFF1744)
 
     Column(
         modifier = Modifier
-            .size(width = 52.dp, height = 46.dp)
+            .size(width = 58.dp, height = 50.dp)
             .background(bg, RoundedCornerShape(8.dp))
-            .border(1.2.dp, borderCol, RoundedCornerShape(8.dp))
+            .border(1.5.dp, borderCol, RoundedCornerShape(8.dp))
             .clickable { onConfirm() }
             .testTag(testTag)
             .padding(2.dp),
@@ -561,12 +564,12 @@ private fun RemoteHoldActionButton(
             imageVector = icon,
             contentDescription = label,
             tint = accentColor,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(20.dp)
         )
         Text(
             text = label,
             color = accentColor,
-            fontSize = 8.sp,
+            fontSize = 9.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Monospace
         )
@@ -582,14 +585,14 @@ private fun RemoteActionButton(
     testTag: String,
     onClick: () -> Unit
 ) {
-    val bg = if (isActive) accentColor.copy(alpha = 0.22f) else Color(0xFF0E1624).copy(alpha = 0.85f)
-    val borderCol = if (isActive) accentColor else Color(0xFF37474F).copy(alpha = 0.6f)
+    val bg = if (isActive) accentColor.copy(alpha = 0.25f) else Color(0xFF0E1624).copy(alpha = 0.88f)
+    val borderCol = if (isActive) accentColor else Color(0xFF37474F).copy(alpha = 0.7f)
 
     Column(
         modifier = Modifier
-            .size(width = 52.dp, height = 46.dp)
+            .size(width = 58.dp, height = 50.dp)
             .background(bg, RoundedCornerShape(8.dp))
-            .border(1.2.dp, borderCol, RoundedCornerShape(8.dp))
+            .border(1.5.dp, borderCol, RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .testTag(testTag)
             .padding(2.dp),
@@ -599,13 +602,13 @@ private fun RemoteActionButton(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = if (isActive) accentColor else Color.White.copy(alpha = 0.8f),
-            modifier = Modifier.size(17.dp)
+            tint = if (isActive) accentColor else Color.White.copy(alpha = 0.85f),
+            modifier = Modifier.size(20.dp)
         )
         Text(
             text = label,
-            color = if (isActive) accentColor else Color.White.copy(alpha = 0.8f),
-            fontSize = 8.sp,
+            color = if (isActive) accentColor else Color.White.copy(alpha = 0.85f),
+            fontSize = 9.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Monospace
         )
@@ -622,25 +625,25 @@ private fun RemoteUtilityButton(
 ) {
     Row(
         modifier = Modifier
-            .background(Color(0xFF0E1624).copy(alpha = 0.85f), RoundedCornerShape(6.dp))
-            .border(1.dp, color.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+            .background(Color(0xFF0A101D).copy(alpha = 0.94f), RoundedCornerShape(8.dp))
+            .border(1.2.dp, color.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .testTag(testTag)
-            .padding(horizontal = 7.dp, vertical = 4.dp),
+            .padding(horizontal = 9.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             tint = color,
-            modifier = Modifier.size(12.dp)
+            modifier = Modifier.size(15.dp)
         )
-        Spacer(modifier = Modifier.width(3.dp))
+        Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = label,
             color = Color.White,
-            fontSize = 9.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Monospace
         )
     }

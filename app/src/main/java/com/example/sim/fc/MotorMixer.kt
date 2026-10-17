@@ -40,11 +40,11 @@ class MotorMixer(
     ) {
         val t = max(0f, min(1f, throttle))
 
-        // Raw motor outputs
-        var m1 = t - pitch + roll + yaw
-        var m2 = t + pitch + roll - yaw
-        var m3 = t - pitch - roll - yaw
-        var m4 = t + pitch - roll + yaw
+        // Raw motor outputs (Quad X layout: M1=RR, M2=FR, M3=RL, M4=FL)
+        var m1 = t + pitch + roll + yaw
+        var m2 = t - pitch + roll - yaw
+        var m3 = t + pitch - roll - yaw
+        var m4 = t - pitch - roll + yaw
 
         if (airmodeEnabled) {
             // Find min and max across all 4 motors

@@ -455,10 +455,10 @@ fun HudOverlay(
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 40.dp)
-                    .background(Color(0xFF0A192F).copy(alpha = 0.90f), RoundedCornerShape(8.dp))
+                    .padding(top = 82.dp)
+                    .background(Color(0xFF0A192F).copy(alpha = 0.92f), RoundedCornerShape(8.dp))
                     .border(1.dp, Color(0xFF00E5FF).copy(alpha = 0.75f), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 12.dp, vertical = 5.dp)
+                    .padding(horizontal = 14.dp, vertical = 6.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(

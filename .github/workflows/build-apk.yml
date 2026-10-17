@@ -33,14 +33,37 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Prepare Environment and Signing Credentials
+      - name: Configure Android SDK & Licenses
         run: |
-          echo "Preparing environment..."
+          echo "Setting up Android SDK environment..."
+          # The ubuntu-latest runner has Android SDK installed at /usr/local/lib/android/sdk
+          if [ -d "$ANDROID_HOME" ]; then
+            SDK_ROOT="$ANDROID_HOME"
+          elif [ -d "$ANDROID_SDK_ROOT" ]; then
+            SDK_ROOT="$ANDROID_SDK_ROOT"
+          else
+            SDK_ROOT="/usr/local/lib/android/sdk"
+          fi
+
+          echo "Using Android SDK at: $SDK_ROOT"
+          echo "ANDROID_HOME=$SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> $GITHUB_ENV
+
+          # Configure local.properties for the build
+          echo "sdk.dir=$SDK_ROOT" > local.properties
+
+          # Accept all SDK licenses automatically
+          if [ -d "$SDK_ROOT/cmdline-tools/latest/bin" ]; then
+            yes | "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          fi
+
+      - name: Prepare Secrets and Signing Credentials
+        run: |
+          echo "Preparing secrets and keystore..."
           # Secrets Gradle plugin expects .env to exist
           if [ ! -f .env ]; then
             if [ -f .env.example ]; then
@@ -58,6 +81,7 @@ jobs:
             echo "Generating fresh debug.keystore..."
             keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           fi
+          ls -la debug.keystore
 
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
@@ -70,7 +94,7 @@ jobs:
         if: ${{ github.event.inputs.build_type == 'release' }}
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Locate and Display APK
+      - name: Locate and Collect APKs
         run: |
           mkdir -p build-apks
           find app/build/outputs/apk/ -name "*.apk" -type f -exec cp {} build-apks/ \;
@@ -82,9 +106,10 @@ jobs:
         with:
           name: SkyPilot-Sim-APK
           path: build-apks/*.apk
+          if-no-files-found: error
           retention-days: 30
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release on Tag
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:

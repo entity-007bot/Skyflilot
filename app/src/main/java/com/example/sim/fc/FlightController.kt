@@ -52,6 +52,7 @@ class FlightController(
 
     // Arming check feedback
     var armingBlockReason: String? = null
+    var lastFeedbackMessage: String? = null
 
     fun canArm(throttleInput: Float): Boolean {
         if (physics.isCrashed) {
@@ -74,6 +75,7 @@ class FlightController(
         if (canArm(throttleInput)) {
             isArmed = true
             isEmergencyStopped = false
+            lastFeedbackMessage = "DRONE ARMED - MOTORS ACTIVE"
             // Set Home Point to takeoff position
             homePosition.set(physics.rigidBody.position)
 
@@ -88,10 +90,14 @@ class FlightController(
             targetGpsZ = physics.rigidBody.position.z
             return true
         }
+        lastFeedbackMessage = armingBlockReason
         return false
     }
 
     fun startAutoTakeoff(height: Float = 2.0f): Boolean {
+        if (physics.isCrashed) {
+            physics.reset(physics.rigidBody.position.x, 0.08f, physics.rigidBody.position.z)
+        }
         if (!isArmed) {
             if (!arm(0f)) return false
         }
@@ -99,6 +105,7 @@ class FlightController(
         targetAltitude = height
         isAutoLanding = false
         isRthActive = false
+        lastFeedbackMessage = "AUTO TAKEOFF INITIATED (TARGET: ${height.toInt()}m)"
         return true
     }
 
