@@ -1,0 +1,6 @@
+{
+  "name": "SkyPilot Sim",
+  "description": "Realistic Multirotor Drone Simulator with real 6-DOF physics, cascaded PID flight controller, 3D training field, and full virtual transmitter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
